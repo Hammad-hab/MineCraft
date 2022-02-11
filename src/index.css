@@ -1,0 +1,78 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+* {
+  margin: 0px;
+}
+
+.button-danger {
+  background: none;
+  font-weight: bolder;
+  font-size: 15px;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+}
+.button-danger:hover {
+  color: red;
+}
+
+.button-danger-second {
+  background: none;
+  font-weight: bolder;
+  font-size: 15px;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  margin-left: 75%;
+}
+.button-danger-second:hover {
+  color: blue;
+}
+.Slider {
+  overflow-y: scroll;
+  height: 300px;
+  border: 1px black solid;
+  width: 300px;
+  outline: none;
+  border-top: none;
+  padding: 5px;
+}
+.SliderTop {
+  border: 1px solid black;
+  padding: 5px;
+  background-color: lightgrey;
+  width: 300px;
+  border-bottom: none;
+}
+.Placeholder {
+  font-weight: bold;
+  opacity: 0.3;
+}
+
+.Slider::first-letter {
+  text-transform: capitalize;
+}
+
+body, head, html {
+  overflow: none;
+}
+.info {
+	position: absolute;
+	top: 10px;
+	width: 100%;
+  height: fit-content;
+	text-align: center;
+	z-index: 100;
+	display:block;
+  margin-top: 42%;
+  color: white;
+  background-color: grey;
+}
+
+
