@@ -18,8 +18,35 @@
   <!-- <noscript>You need to enable JavaScript to run this app.</noscript> -->
   <div id="root">
   </div>
-  <pre class="info">
-    Cheap Mincreaft project powered by <a href="https://threejs.org/">ThreeJS</a> & <a href="https://reactjs.org/">ReactJS</a>. 
+  <audio src="Song.wav" loop></audio>
+  <audio src="Crunch.wav" id="walking"></audio>
+  <audio src="Crunch Fast.wav" id="walkingFast"></audio>
+  <!-- <pre class="info"> -->
+    <!-- Cheap Mincreaft project powered by <a href="https://threejs.org/">ThreeJS</a> & <a href="https://reactjs.org/">ReactJS</a>. Click the screen to play the music -->
+    <script>
+      var audio = document.querySelector('audio')
+      var Walk = document.getElementById('walking')
+      var walkingFast = document.getElementById('walkingFast')
+      // window.onload= () => {
+      window.addEventListener("click", (Obj) => {
+      audio.volume = 0.5
+      audio.play()
+      })
+      window.addEventListener('keypress', (Obj) => {
+        switch (Obj.key) {
+          case "w": 
+            Walk.play()
+          break
+          case "x":
+            walkingFast.play() 
+          break
+          default:
+            return false 
+          break
+        }
+      })
+    // }
+    </script>
     <!-- <input type="color"> -->
   </pre>
 </body>

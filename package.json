@@ -7,13 +7,16 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "@types/three": "^0.137.0",
+    "cannon-es": "^0.19.0",
     "nvm": "0.0.4",
     "physijs": "^1.0.4",
+    "physijs-webpack": "^0.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-scripts": "5.0.0",
     "three": "^0.137.5",
+    "three-dragcontrols": "^0.88.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

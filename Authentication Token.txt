@@ -1,0 +1,8 @@
+Authentication token:
+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
+
+Expiration date: 12/1/2022
+
+Go to 
+https://github.com/settings/tokens
+to regenerate Intregrated

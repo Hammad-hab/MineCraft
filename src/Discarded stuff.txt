@@ -1,3 +1,4 @@
+
 Discarded stuff
 //	Classic Perlin 3D Noise 
         //	by Stefan Gustavson
@@ -240,3 +241,5 @@ var Mat = new THREE.ShaderMaterial({
     }
     return Result
 }
+   camera.fov = 2 * Math.atan((window.innerHeight / 2) / 100) * (180 / Math.PI)
+        camera.position.y = 0

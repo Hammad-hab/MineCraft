@@ -1,71 +1,71 @@
+/* eslint-disable no-unused-expressions */
 import * as THREE from 'three'
-import Img from './Comp/Images/Img2.bmp'
-import Img3 from './Comp/Images/Texture.jpg'
-import CedarTexture from './Comp/Images/Img3.jpg'
+import Dirt from './Comp/Images/Img2.bmp'
+import Lava from './Comp/Images/Texture.jpg'
+import grass from './Comp/Images/Img3.jpg'
 import Debris from './Comp/Images/Debris.jpg'
-import { ShaderMaterial } from 'three'
-import *  as Physijs from 'physijs'
-// import Worker from "worker-loader!./Worker";
+// import Sea from './Comp/Images/CedarTextrue.jpg'
+import {ShaderMaterial } from 'three'
+import SkyDead from './Comp/Images/SkyTextureDead.PNG'
 import Sky from './Comp/Images/SkyTexture.PNG'
-var Appended = false
-var Incre = 1
-import { Worker } from "worker-loader";
 
-Physijs.scripts.worker = 'worker.js'
-Physijs.scripts.ammo = 'ammo.js'
-var PositionArray = [
-    function (IncrementBy) {
-        for (let i = 5; i < PositionArray.length; i++) {
-            PositionArray[i].position.y += IncrementBy
-        }
-    }, function (DecrementBy) {
-        for (let i = 5; i < PositionArray.length; i++) {
-            PositionArray[i].position.y -= DecrementBy
-        }
-    }, function (IncrementBy) {
-        for (let i = 5; i < PositionArray.length; i++) {
-            PositionArray[i].position.x += IncrementBy
-        }
-    }, function (DecrementBy) {
-        for (let i = 5; i < PositionArray.length; i++) {
-            PositionArray[i].position.x -= DecrementBy
-        }
-    }
-]
+// Variables
+var MeshArray = []
+var Appended = false
+var AccelerationRate  = 1;
+var LandStickRange = 1000
+var Collison;
+function CollisonDectector(x1, x2, y1, y2, z1, z2) {
+    var DistX = x1 - x2
+    var DistZ = z1 - z2
+    var DistY = y1 - y2
+    return Math.sqrt(Math.pow(DistX, 2) + Math.pow(DistY, 2))
+}
+var backgroundSet = false
 
 const Main = () => {
+    var
+        scene, camera, CreateObj, renderer
+    
+    (function () {
 
-
-    const scene = new Physijs.Scene();
-
-    // {
-    //     scene.background = new THREE.TextureLoader().load(Sky);
-    // }
-
-    function CreateObj(Mesh, push) {
-        scene.add(Mesh)
-        if (push === true) {
-            PositionArray.push(Mesh)
+        scene = new THREE.Scene();
+        {
+            scene.background = new THREE.TextureLoader().load(Sky);
+        }
+        // scene.setGravity(new THREE.Vector3(0, -10, 0))
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01)
+        camera.position.z += 20;
+        camera.zoom = 10
+        camera.rotation.y = -0.003076733845460768
+        camera.rotation.x = 1.2432621643567174
+        CreateObj = function Creator(Mesh, push) {
+            scene.add(Mesh)
+            if (push === true) {
+                MeshArray.push(Mesh)
+            }
+        }
+    })()
+    
+    function SetBackGround() {
+        if (backgroundSet === false) {
+            setTimeout(() => {
+                scene.background = new THREE.TextureLoader().load(SkyDead);
+                backgroundSet = true
+            }, 2000);
         }
     }
-    // scene.setGravity(new THREE.Vector3(0, -10, 0))
-    var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01)
-    camera.position.z = 10;
-    camera.zoom = 10
-    camera.fov = 2 * Math.atan((window.innerHeight / 2) / 100) * (180 / Math.PI)
-    camera.position.y = 0
+ 
 
-    var time = 0
-    var Character = new THREE.BoxGeometry(1, 1, 1, 10, 10, 10)
-    var geometry = new THREE.PlaneGeometry(1000, 1000, 20.0, 20.0)
-    var sea = new THREE.PlaneBufferGeometry(1000, 1000, 150, 150)
-    var geometry4 = new THREE.BoxGeometry(1, 1, 5, 10, 10, 10, 10)
-    var Body = new THREE.BoxBufferGeometry(2, 2, 20, 10, 10, 10)
-    var v2 = new THREE.ShaderMaterial({
+    var Base = new THREE.PlaneGeometry(2000, 2000, 10, 10)
+    var Grass = new THREE.PlaneBufferGeometry(2000, 2000, 150, 150)
+    var CheckMark = new THREE.BoxGeometry(1, 1, 5, 10, 10, 10, 10)
+    // Shaders
+    var CheckMarkShader = new THREE.ShaderMaterial({
         side: THREE.DoubleSide,
         uniforms: {
             time: { value: 10 },
-            Smtexture: { value: new THREE.TextureLoader().load(Img3) },
+            Smtexture: { value: new THREE.TextureLoader().load(Lava) },
         },
         vertexShader: ` 
         uniform float time;
@@ -90,12 +90,11 @@ const Main = () => {
         //wireframe: true,
     })
 
-
-    var material = new THREE.ShaderMaterial({
+    var BaseShader = new THREE.ShaderMaterial({
         side: THREE.DoubleSide,
         uniforms: {
             time: { value: 100 },
-            Smtexture: { value: new THREE.TextureLoader().load(Img) },
+            Smtexture: { value: new THREE.TextureLoader().load(Dirt) },
             CamPos: {}
         },
         vertexShader: `
@@ -133,10 +132,10 @@ const Main = () => {
         }`,
     })
 
-    var SeaMaterial = new ShaderMaterial({
+    var GrassShader = new ShaderMaterial({
         uniforms: {
             time: { value: 100 },
-            textur: { value: new THREE.TextureLoader().load(CedarTexture) }
+            textur: { value: new THREE.TextureLoader().load(Debris) }
         },
         vertexShader: `
         varying vec2 vUv;
@@ -160,7 +159,7 @@ const Main = () => {
             gl_FragColor = veiw;
         }`
     })
-    var DebrisT = new ShaderMaterial({
+    var DebrisShader = new ShaderMaterial({
         uniforms: {
             time: { value: 100 },
             textur: { value: new THREE.TextureLoader().load(Debris) }
@@ -187,113 +186,165 @@ const Main = () => {
             gl_FragColor = veiw;
         }`
     })
-    var mesh = new Physijs.BoxMesh(geometry, material);
-    var mesh3 = new THREE.Mesh(sea, SeaMaterial)
-    var Mesh = new THREE.Mesh(Body, v2)
-    var StoneDebris = new THREE.Mesh(sea, DebrisT)
-    var Box = new THREE.Mesh(Character, v2)
-    Mesh.position.y -= 5
-    mesh3.position.z += 5
-    StoneDebris.position.z += 5
+    var SeaShader = new ShaderMaterial({
+        uniforms: {
+            time: { value: 0.5 },
+            textur: { value: new THREE.TextureLoader().load(grass) }
+        },
+        vertexShader: `
+        varying vec2 vUv;
+        uniform float time;
+        void main() {
+            vUv = uv;
+            vec3 newposition = position;
+            float dist = distance(vUv, vec2(0.5));
+            float VariA = 10. * cos(dist*1000. + time);
+            // float VariB = sin(dist*1000. + time);
+            float VariC = tan(dist + time);
+            // float Noise = VariA + VariB + VariC;
+            // newposition.z += VariA;
+            // newposition.z += VariC;
+            newposition.y -= VariA;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(newposition, 1.0 );
+        }`,
+        fragmentShader: `
+        varying vec2 vUv;
+        uniform sampler2D textur;
+        void main() {
+            vec4 veiw = texture2D(textur, vUv);
+            gl_FragColor = veiw;
+        }`,
+        // wireframe: true
+    })
+    var DebrisShader = new ShaderMaterial({
+        uniforms: {
+            time: { value: 100 },
+            textur: { value: new THREE.TextureLoader().load(Lava) }
+        },
+        vertexShader: `
+        varying vec2 vUv;
+        uniform float time;
+        void main() {
+            vUv = uv;
+            vec3 newposition = position;
+            float dist = distance(vUv, vec2(0.5));
+            float VariA = cos(dist*1000. + time);
+            float VariB = sin(dist*1000. + time);
+            float VariC = tan(dist*1000. + time);
+            float Noise = VariA + VariB + VariC;
+            newposition.z +=  Noise;
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(newposition, 1.0 );
+        }`,
+        fragmentShader: `
+        varying vec2 vUv;
+        uniform sampler2D textur;
+        void main() {
+            vec4 veiw = texture2D(textur, vUv);
+            gl_FragColor = veiw;
+        }`
+    })
+    // var BaseMesh = new THREE.Mesh(Base, BaseShader);
+    var GrassMesh = new THREE.Mesh(Grass, GrassShader)
+    var CheckMarkMesh = new THREE.Mesh(CheckMark, CheckMarkShader)
+    var StoneDebrisMesh = new THREE.Mesh(Grass, DebrisShader)
+    var SeaMesh = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000, 200, 200), SeaShader)
+    CheckMarkMesh.position.y -= 5
+    GrassMesh.position.z += 5
+    GrassMesh.position.y -= 50
+    // SeaMesh.position.z -= 50
+    StoneDebrisMesh.position.z += 5
     var Color = new THREE.Color(255, 255, 255)
     scene.fog = new THREE.Fog(Color, 0.1, 0.5)
-    Box.position.z += 5
-    Box.position.y += 5.0
-    CreateObj(Mesh, true)
-    CreateObj(mesh, true);
-    CreateObj(mesh3, true)
-    CreateObj(StoneDebris, true)
-    CreateObj(Box, true)
-    // scene.fog = new THREE.Fog('red', 1000, 5000)
-    time += 0.05
-    var renderer = new THREE.WebGLRenderer({
+    SeaMesh.position.z += 5
+    SeaMesh.position.y += GrassMesh.position.y + 2000
+
+    CreateObj(SeaMesh, true)
+    // CreateObj(BaseMesh, true)
+    CreateObj(GrassMesh, true);
+    CreateObj(CheckMarkMesh, true)
+    CreateObj(StoneDebrisMesh, true)
+
+    renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    if (Appended === false) {
-
-        document.body.appendChild(renderer.domElement);
-
-        // window.onload = () => {
-        // var canvas = document.querySelector('canvas')
-        // var C = canvas.getContext('2d')
-        // C.fillRect(50, 50, 50, 50)
-        // }
+    var CanvasIsCreated = Appended === false ? _Success() : console.log(false)
+    var AllowDeathNotification = false
+    function _Success() {
         Appended = true
-        /*
-        FOR DEVELOPMENT PURPOSES ONLY
-        =============================
-        var controls = new OrbitControls(camera, renderer.domElement)
-        controls.enableZoom = true
-        controls.enableRotate = true
-        */
+        document.body.appendChild(renderer.domElement)
+       
     }
-    function animation() {
-        // Rendering ThreeJS
-        /*
-        FOR DEVELOPMENT PURPOSES ONLY
-        =============================
-        console.log(mesh.position.y)
-        console.log(camera.rotation.y + " " + camera.rotation.x)
-            
-        console.table(['MESH', '========', 'X: ' + mesh.position.x + ' Y: ' + mesh.position.y + ' Z: '+ mesh.position.z, 'CAMERA', '==========', 'X: ' + camera.position.x + ' Y: ' + camera.position.y + ' Z: '+ camera.position.z])
-        */
-        // SeaMaterial.uniforms.time.value++
-        scene.simulate()
+    
+    function MoveForward(SpeedOfMovemnent) {
+        const direction = new THREE.Vector3;
+        var speed = SpeedOfMovemnent;
+        function MoveBy() {
+            camera.getWorldDirection(direction);
+            camera.position.addScaledVector(direction, speed);
+
+        }
+
+        MoveBy()
+    }
+
+    function _AnimationLoop() {
+        requestAnimationFrame(_AnimationLoop);
+        var Collison = CollisonDectector(camera.position.x, GrassMesh.position.x, camera.position.y, GrassMesh.position.y);
+        console.log(camera.rotation.x)
+        if (Collison > LandStickRange) {
+            // camera.rotation.x = 50
+            camera.position.z -= AccelerationRate;
+            AccelerationRate ++;
+            SetBackGround()
+        };
+        SeaShader.uniforms.time.value += 0.1;
         renderer.render(scene, camera);
     }
-    setInterval(() => {
-        animation()
-    }, 120);
-    window.addEventListener(
-        'resize',
-        () => {
-            renderer.setSize(window.innerWidth, window.innerHeight - 50);
-            camera.aspect = window.innerWidth / window.innerHeight
-            camera.updateProjectionMatrix()
-        }
-    )
 
-    camera.rotation.y = -0.003076733845460768
-    camera.rotation.x = 1.2432621643567174
-    var PassAble = true
-    window.addEventListener('keypress', (e) => {
-        var key = e.key
-        /* FOR DEVELOPMENT PURPOSES: 
-         console.log(e)
-         */
+  _AnimationLoop()
+    
+    function _EnsureControlKey(EventObject) {
+        var key = EventObject.key;
         switch (key) {
-            case 'w':
-                const direction = new THREE.Vector3;
-                let speed = 1.0;
-
-                function eventOrLoopOrSomething() {
-                    camera.getWorldDirection(direction);
-
-                    camera.position.addScaledVector(direction, speed);
-
-                }
-
-                eventOrLoopOrSomething()
-
+            case "w":
+                (Collison = CollisonDectector(camera.position.x, GrassMesh.position.x, camera.position.z, GrassMesh.position.z)) <= 0 ? MoveForward(1) : ((camera.position.z = GrassMesh.position.z + 20), MoveForward(1));
                 break;
-
+            case "x":
+                (Collison = CollisonDectector(camera.position.x, GrassMesh.position.x, camera.position.z, GrassMesh.position.z)) <= 0 ? MoveForward(10) : ((camera.position.z = GrassMesh.position.z + 20), MoveForward(10));
+                break;
+            case "s": 
+            /* const CurrentPosition = camera.position.z
+              
+              if (camera.position.z === CurrentPosition + 5) {
+                camera.position.z -= 5
+              } else { 
+                  camera.position.z += 5; 
+              } */
+            
+            break
             default:
-                console.log('UnIdentified Control')
-                break;
+                console.log("Unidentified Control");
         }
-    }
-    )
-    window.addEventListener('mouseover', () => {
+            }
 
-    })
+    // Event Listener
+    window.addEventListener('keypress', (e) => { _EnsureControlKey(e) })
     window.addEventListener('mousemove', (Obj) => {
+         
         if (Obj.clientY <= 250 && camera.rotation.x < 360) {
             camera.rotation.x = 0.01 * Obj.clientY
         }
         camera.rotation.y = 0.01 * Obj.clientX
     })
+
+    // setInterval(() => {
+
+    // }, 1);
+
 }
 
+// Executing
 export default Main
