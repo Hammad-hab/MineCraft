@@ -18,37 +18,64 @@
   <!-- <noscript>You need to enable JavaScript to run this app.</noscript> -->
   <div id="root">
   </div>
-  <audio src="Song.wav" loop></audio>
-  <audio src="Crunch.wav" id="walking"></audio>
-  <audio src="Crunch Fast.wav" id="walkingFast"></audio>
-  <pre class="info">
-    Cheap Mincreaft project powered by <a href="https://threejs.org/">ThreeJS</a> & <a href="https://reactjs.org/">ReactJS</a>. Click the screen to play the music
-    <script>
-      var audio = document.querySelector('audio')
-      var Walk = document.getElementById('walking')
-      var walkingFast = document.getElementById('walkingFast')
-      // window.onload= () => {
+  <audio src="Sound Effects\Song.wav" loop></audio>
+  <audio src="Sound Effects\Crunch.wav" id="walking"></audio>
+  <audio src="Sound Effects\Crunch Fast.wav" id="walkingFast"></audio>
+  <audio src="Sound Effects\Pop.wav" id="createdABlock"></audio>
+  <p class="info" style="margin-top: 20%;" id="Death_Text" onclick="Stop()"></p>
+  <!-- Cheap Mincreaft project powered by <a href="https://threejs.org/">ThreeJS</a> & <a href="https://reactjs.org/">ReactJS</a>. Click the screen to play the music -->
+  <script>
+    localStorage.setItem('Dead', 'false')
+    var audio = document.querySelector('audio')
+    var Walk = document.getElementById('walking')
+    var walkingFast = document.getElementById('walkingFast')
+    var Created_A_Block = document.getElementById('createdABlock')
+    window.onload = () => {
       window.addEventListener("click", (Obj) => {
-      audio.volume = 0.5
-      audio.play()
+        audio.volume = 0.5
+        audio.play()
       })
       window.addEventListener('keypress', (Obj) => {
         switch (Obj.key) {
-          case "w": 
+          case "w":
             Walk.play()
-          break
+            break
           case "x":
-            walkingFast.play() 
-          break
+            walkingFast.play()
+            break;
+          case 's':
+            Created_A_Block.play()
+            break
           default:
-            return false 
-          break
+            return false
+            break
         }
       })
-    // }
-    </script>
-    <!-- <input type="color"> -->
-  </pre>
+    }
+    setInterval(() => {
+      if (localStorage.getItem('Dead') === 'true') {
+        setTimeout(() => {
+        document.getElementById('Death_Text').innerHTML = "Click the text to respawn"
+        audio.volume = 0.5
+        }, 5000);
+        if (document.getElementById('Death_Text').style.display === 'block') {
+          document.getElementById('Death_Text').style.display = 'none'
+        }
+        else {
+          document.getElementById('Death_Text').style.display = 'block'
+        }
+      }
+    }, 500);
+
+    setInterval(() => {
+
+    }, 500);
+    function Stop() {
+      window.location.reload()
+    }
+  </script>
+  <!-- <input type="color"> -->
+
 </body>
 
 </html>

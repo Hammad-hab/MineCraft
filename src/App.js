@@ -5,16 +5,19 @@ import Lava from './Comp/Images/Texture.jpg'
 import grass from './Comp/Images/Img3.jpg'
 import Debris from './Comp/Images/Debris.jpg'
 // import Sea from './Comp/Images/CedarTextrue.jpg'
-import {ShaderMaterial } from 'three'
-import SkyDead from './Comp/Images/SkyTextureDead.PNG'
+import { ShaderMaterial } from 'three'
+import { Raycaster } from 'three'
+import SkyDead from './Comp/Images/SkyTextureDead.png'
 import Sky from './Comp/Images/SkyTexture.PNG'
 
 // Variables
 var MeshArray = []
+
 var Appended = false
-var AccelerationRate  = 1;
+var AccelerationRate = 1;
 var LandStickRange = 1000
 var Collison;
+localStorage.setItem('Dead', 'false')
 function CollisonDectector(x1, x2, y1, y2, z1, z2) {
     var DistX = x1 - x2
     var DistZ = z1 - z2
@@ -26,7 +29,7 @@ var backgroundSet = false
 const Main = () => {
     var
         scene, camera, CreateObj, renderer
-    
+
     (function () {
 
         scene = new THREE.Scene();
@@ -46,7 +49,7 @@ const Main = () => {
             }
         }
     })()
-    
+
     function SetBackGround() {
         if (backgroundSet === false) {
             setTimeout(() => {
@@ -55,7 +58,7 @@ const Main = () => {
             }, 2000);
         }
     }
- 
+
 
     var Base = new THREE.PlaneGeometry(2000, 2000, 10, 10)
     var Grass = new THREE.PlaneBufferGeometry(2000, 2000, 150, 150)
@@ -275,9 +278,10 @@ const Main = () => {
     function _Success() {
         Appended = true
         document.body.appendChild(renderer.domElement)
-       
+
+
     }
-    
+
     function MoveForward(SpeedOfMovemnent) {
         const direction = new THREE.Vector3;
         var speed = SpeedOfMovemnent;
@@ -293,19 +297,20 @@ const Main = () => {
     function _AnimationLoop() {
         requestAnimationFrame(_AnimationLoop);
         var Collison = CollisonDectector(camera.position.x, GrassMesh.position.x, camera.position.y, GrassMesh.position.y);
-        console.log(camera.rotation.x)
+        // console.log(camera.rotation.x)
         if (Collison > LandStickRange) {
             // camera.rotation.x = 50
             camera.position.z -= AccelerationRate;
-            AccelerationRate ++;
+            AccelerationRate++;
             SetBackGround()
+            localStorage.setItem('Dead', 'true')
         };
         SeaShader.uniforms.time.value += 0.1;
         renderer.render(scene, camera);
     }
 
-  _AnimationLoop()
-    
+    _AnimationLoop()
+
     function _EnsureControlKey(EventObject) {
         var key = EventObject.key;
         switch (key) {
@@ -315,34 +320,47 @@ const Main = () => {
             case "x":
                 (Collison = CollisonDectector(camera.position.x, GrassMesh.position.x, camera.position.z, GrassMesh.position.z)) <= 0 ? MoveForward(10) : ((camera.position.z = GrassMesh.position.z + 20), MoveForward(10));
                 break;
-            case "s": 
-            /* const CurrentPosition = camera.position.z
-              
-              if (camera.position.z === CurrentPosition + 5) {
-                camera.position.z -= 5
-              } else { 
-                  camera.position.z += 5; 
-              } */
-            
-            break
+            case "s":
+                const Sph = new THREE.BoxGeometry(10, 10, 10, 10, 10, 10)
+                const ere = new THREE.MeshNormalMaterial()
+                const Sphere = new THREE.Mesh(Sph, ere)
+                scene.add(Sphere)
+                if (IntersectionPoint.z >= GrassMesh.position.z) {
+                    // Sphere.position.z -= 10
+                    Sphere.position.copy(IntersectionPoint)
+                } else {
+                    Sphere.position.z += (GrassMesh.position.z + 10)
+                    Sphere.position.copy(IntersectionPoint)
+                }
+                break
             default:
                 console.log("Unidentified Control");
         }
-            }
+    }
 
     // Event Listener
+    var mouse = new THREE.Vector2;
+    var Plane = new THREE.Plane()
+    var IntersectionPoint = new THREE.Vector3;
+    var PlaneNormal = new THREE.Vector3;
+    var raycaster = new Raycaster()
     window.addEventListener('keypress', (e) => { _EnsureControlKey(e) })
     window.addEventListener('mousemove', (Obj) => {
-         
         if (Obj.clientY <= 250 && camera.rotation.x < 360) {
-            camera.rotation.x = 0.01 * Obj.clientY
+         camera.rotation.x = 0.01 * Obj.clientY
+         Plane.translate(new THREE.Vector3(camera.rotation.x, camera.rotation.y, camera.rotation.z))
         }
         camera.rotation.y = 0.01 * Obj.clientX
+        mouse.x = (Obj.clientX / window.innerWidth) * 2 - 1
+        mouse.y = -(Obj.clientY / window.innerHeight) * 2 + 1
+        PlaneNormal.copy(camera.position).normalize()
+        Plane.setFromNormalAndCoplanarPoint(PlaneNormal, scene.position)
+        raycaster.setFromCamera(mouse, camera)
+        raycaster.ray.intersectPlane(Plane, IntersectionPoint)
+    
     })
 
-    // setInterval(() => {
-
-    // }, 1);
+    //   })  
 
 }
 

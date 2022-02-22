@@ -70,9 +70,11 @@ body, head, html {
 	text-align: center;
 	z-index: 100;
 	display:block;
-  margin-top: 42%;
+  /* margin-top: Adjustable; */
   color: white;
-  background-color: grey;
+  font-size: medium;
+  font-weight: bolder;
+  /* background-color: grey; */
 }
 
 
