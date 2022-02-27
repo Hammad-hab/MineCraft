@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* padding: 0px; */
 }
 * {
   margin: 0px;
@@ -65,9 +66,9 @@ body, head, html {
 .info {
 	position: absolute;
 	top: 10px;
-	width: 100%;
+	/* width: 100%; */
   height: fit-content;
-	text-align: center;
+	/* text-align: center; */
 	z-index: 100;
 	display:block;
   /* margin-top: Adjustable; */
@@ -77,4 +78,107 @@ body, head, html {
   /* background-color: grey; */
 }
 
+.info-special {
+  position: absolute;
+	top: 100px;
+  /* margin-left: 50%; */
+  height: fit-content;
+	z-index: 200;
+	display:block;
+  color: white;
+  font-size: medium;
+  font-weight: bolder;
+}
 
+.left_top {
+  margin-left: 110px;
+  margin-top: -20px;
+}
+
+label {
+  margin-top: -20px;
+}
+
+#root {
+  margin: 0px;
+  width: 0px;
+  height: 0px;
+  display: none;
+}
+
+.info-special-div{
+  position: absolute;
+	top: 100px;
+  height: fit-content;
+	z-index: 200;
+	display:block;
+  color: white;
+  font-size: medium;
+  font-weight: bolder;
+  margin-top: -60px;
+  padding: 10px;
+}
+
+.hidden {
+ opacity: 0;
+}
+
+.controlHref {
+margin-left: 10px;
+}
+
+.fadeIn {
+  animation-name: fadeIn;
+  animation-duration: 5s;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 100;}
+}
+
+.fadeOut {
+  animation-name: fadeOut;
+  animation-duration: 5s;
+}
+
+@keyframes fadeOut {
+  from {opacity: 100;}
+  to {opacity: 0;}
+}
+
+.container {
+  border: 1px solid grey;
+  padding: 10px;
+  margin-top: 200px;
+}
+
+.container-childrenBox {
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border: 1px solid white;
+  margin-top: 1px;
+  text-align: center;
+  padding: 2px;
+}
+.containerLabel {
+  text-align: center;
+  font-size: 10px;
+  color: black;
+
+}
+
+.darkTheme {
+  color : black;
+  font-size: 20px;
+  margin-top: 10px;
+  /* padding : 10px; */
+  /* margin-left: -10px; */
+  display: inline;
+}
+
+.darkTheme:hover::after {
+   content: "preview";
+   font-size: 10px;
+}

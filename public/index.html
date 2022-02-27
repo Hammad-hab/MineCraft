@@ -4,37 +4,53 @@
 <head>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
   <meta charset="utf-8" />
-  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
   <meta name="description" content="Web site created using create-react-app" />
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
   <!-- <script src="src/physi.js"></script> -->
-  <title>My App</title>
+  <title>CheapCraft</title>
 </head>
 
-<body>
+<body >
   <!-- <noscript>You need to enable JavaScript to run this app.</noscript> -->
   <div id="root">
+
   </div>
   <audio src="Sound Effects\Song.wav" loop></audio>
   <audio src="Sound Effects\Crunch.wav" id="walking"></audio>
   <audio src="Sound Effects\Crunch Fast.wav" id="walkingFast"></audio>
   <audio src="Sound Effects\Pop.wav" id="createdABlock"></audio>
-  <p class="info" style="margin-top: 20%;" id="Death_Text" onclick="Stop()"></p>
+  <p class="info" style="margin-top: 20%; text-align: center;" id="Death_Text" onclick="Stop()"></p>
+  <canvas class="info" style="display: none; padding: 0px; margin-top: -10px;"></canvas>
+
+  <div class="info"
+    style="border: 1px solid black; width: 200px; height: 200px; resize: both; background-color: grey; padding: 1px;">
+    <button style="margin-left: 1px;" onclick="StartCreating()" id="Create">Create</button>
+    <button style="margin-left: 1px; display: none;" onclick="StopCreating()" id="Done">Done</button>
+    <select style="display: block">
+     <option onselect="SwitchMode()">Stright Draw</option>
+    </select>
+    
+    <!-- <button></button> -->
+  </div>
   <!-- Cheap Mincreaft project powered by <a href="https://threejs.org/">ThreeJS</a> & <a href="https://reactjs.org/">ReactJS</a>. Click the screen to play the music -->
   <script>
+    var Incre = 0
+    var Increm = 0
     localStorage.setItem('Dead', 'false')
     var audio = document.querySelector('audio')
     var Walk = document.getElementById('walking')
     var walkingFast = document.getElementById('walkingFast')
     var Created_A_Block = document.getElementById('createdABlock')
+  
     window.onload = () => {
-      window.addEventListener("click", (Obj) => {
-        audio.volume = 0.5
-        audio.play()
-      })
+      // window.addEventListener("click", (Obj) => {
+      // audio.volume = 0.5
+      // audio.play()
+      // })
       window.addEventListener('keypress', (Obj) => {
         switch (Obj.key) {
           case "w":
@@ -46,6 +62,22 @@
           case 's':
             Created_A_Block.play()
             break
+          case 'a':
+            Incre += 4
+            c.clearRect(0,0,canvas.width,canvas.height)
+            c.fillRect(Incre, 0, 4000, 4000)
+            break
+          case 'd':
+            Incre -= 4
+            c.clearRect(0,0,canvas.width,canvas.height)
+            c.fillRect(Incre, 0, 4000, 4000)
+            break
+          case 'j':
+            Increm += 4
+            break
+          case 'l':
+            Increm -= 4
+            break
           default:
             return false
             break
@@ -55,8 +87,9 @@
     setInterval(() => {
       if (localStorage.getItem('Dead') === 'true') {
         setTimeout(() => {
-        document.getElementById('Death_Text').innerHTML = "Click the text to respawn"
-        audio.volume = 0.5
+          document.getElementById('Death_Text').innerHTML = "Click the text to respawn"
+          audio.volume = 0.5
+          audio.play()
         }, 5000);
         if (document.getElementById('Death_Text').style.display === 'block') {
           document.getElementById('Death_Text').style.display = 'none'
@@ -68,11 +101,41 @@
     }, 500);
 
     setInterval(() => {
-
     }, 500);
     function Stop() {
       window.location.reload()
     }
+    const canvas = document.querySelector('canvas')
+    canvas.width = innerWidth
+    canvas.height = innerHeight
+    var canvasParent = canvas.parentElement
+    const c = canvas.getContext('2d')
+    c.fillRect(0, 0, 4000, 4000)
+
+    canvas.addEventListener('click',(e) => {
+      // canvas.onmousemove = (e) => {
+      console.log(e)
+      c.fillStyle = "rgb(255,255,255)"
+      c.fillRect(e.clientX, e.clientY, 10, 10)
+      localStorage.setItem('X', e.clientX)
+      localStorage.setItem('Y', e.clientY)
+      // localStorage.setItem("Z", Number(localStorage.getItem("Z"))++)
+      // }
+    })
+  
+  function StartCreating() {
+    canvas.style.display = "block"
+    document.getElementById("Done").style.display = "block"
+    document.getElementById("Create").disabled = true
+    document.getElementById('root').style.display = 'block'
+  }
+  function StopCreating () {
+    canvas.style.display = "none"
+    document.getElementById("Done").style.display = "none"
+    document.getElementById("Create").disabled = false
+    document.getElementById('root').style.display = 'none'
+  } 
+  
   </script>
   <!-- <input type="color"> -->
 

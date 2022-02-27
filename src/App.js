@@ -6,9 +6,11 @@ import grass from './Comp/Images/Img3.jpg'
 import Debris from './Comp/Images/Debris.jpg'
 // import Sea from './Comp/Images/CedarTextrue.jpg'
 import { ShaderMaterial } from 'three'
-import { Raycaster } from 'three'
+import Slider from './Comp/Slider'
 import SkyDead from './Comp/Images/SkyTextureDead.png'
 import Sky from './Comp/Images/SkyTexture.PNG'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
 
 // Variables
 var MeshArray = []
@@ -17,6 +19,7 @@ var Appended = false
 var AccelerationRate = 1;
 var LandStickRange = 1000
 var Collison;
+var objectl;
 localStorage.setItem('Dead', 'false')
 function CollisonDectector(x1, x2, y1, y2, z1, z2) {
     var DistX = x1 - x2
@@ -29,7 +32,7 @@ var backgroundSet = false
 const Main = () => {
     var
         scene, camera, CreateObj, renderer
-
+    var mouse = new THREE.Vector3;
     (function () {
 
         scene = new THREE.Scene();
@@ -59,10 +62,33 @@ const Main = () => {
         }
     }
 
+    const fbxLoader = new OBJLoader()
+    var path = require('./OBJmodel.obj')
+    var mtlloader = new MTLLoader()
+    mtlloader.load('./MLT.mlt', function (materia) {
+        materia.preload()
+        fbxLoader.setMaterials(materia)
+        fbxLoader.load(
+            path,
+            (object) => {
+                // object.traverse(function (child) 
+                object.rotation.x -= 200
+                // }, 100);
+                scene.add(object)
+            },
+            (xhr) => {
+                console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+            },
+            (error) => {
+                console.log(error)
+            }
+        )
+    })
 
     var Base = new THREE.PlaneGeometry(2000, 2000, 10, 10)
     var Grass = new THREE.PlaneBufferGeometry(2000, 2000, 150, 150)
     var CheckMark = new THREE.BoxGeometry(1, 1, 5, 10, 10, 10, 10)
+
     // Shaders
     var CheckMarkShader = new THREE.ShaderMaterial({
         side: THREE.DoubleSide,
@@ -305,33 +331,51 @@ const Main = () => {
             SetBackGround()
             localStorage.setItem('Dead', 'true')
         };
+        // if (Number(localStorage.getItem("Z")) < GrassMesh.position.z) {
+            // mouse.z = (GrassMesh.position.z + Number(localStorage.getItem("Z")))
+        // } else {
+            mouse.z = Number(localStorage.getItem("Z"))
+        // }
+
+        mouse.x = Number(localStorage.getItem('X'))
+        mouse.y = Number(localStorage.getItem("Y"))
+        const Sph = new THREE.BoxGeometry(10, 10, 10, 10, 10, 10)
+        const ere = new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load(grass)
+        })
+        const Sphere = new THREE.Mesh(Sph, ere)
+        scene.add(Sphere)
+        Sphere.position.copy(mouse)
+
         SeaShader.uniforms.time.value += 0.1;
         renderer.render(scene, camera);
     }
 
-    _AnimationLoop()
 
+    _AnimationLoop()
+    var Collison2
     function _EnsureControlKey(EventObject) {
         var key = EventObject.key;
         switch (key) {
             case "w":
+                // Collison2 = CollisonDectector(camera.position.x, Sphere.position.x, camera.position.z, Sphere.position.z)
                 (Collison = CollisonDectector(camera.position.x, GrassMesh.position.x, camera.position.z, GrassMesh.position.z)) <= 0 ? MoveForward(1) : ((camera.position.z = GrassMesh.position.z + 20), MoveForward(1));
+                // if (Collison2 <= 0) {
+                // camera.position.z += Sphere.position.z
+                // }
                 break;
             case "x":
                 (Collison = CollisonDectector(camera.position.x, GrassMesh.position.x, camera.position.z, GrassMesh.position.z)) <= 0 ? MoveForward(10) : ((camera.position.z = GrassMesh.position.z + 20), MoveForward(10));
                 break;
             case "s":
-                const Sph = new THREE.BoxGeometry(10, 10, 10, 10, 10, 10)
-                const ere = new THREE.MeshNormalMaterial()
-                const Sphere = new THREE.Mesh(Sph, ere)
-                scene.add(Sphere)
-                if (IntersectionPoint.z >= GrassMesh.position.z) {
-                    // Sphere.position.z -= 10
-                    Sphere.position.copy(IntersectionPoint)
-                } else {
-                    Sphere.position.z += (GrassMesh.position.z + 10)
-                    Sphere.position.copy(IntersectionPoint)
-                }
+
+                // if (IntersectionPoint.z >= GrassMesh.position.z) {
+                // Sphere.position.z -= 10
+                // } else {
+                // Sphere.position.z += (GrassMesh.position.z + 10)
+                // Sphere.position.copy(IntersectionPoint)
+
+                // }
                 break
             default:
                 console.log("Unidentified Control");
@@ -339,28 +383,34 @@ const Main = () => {
     }
 
     // Event Listener
-    var mouse = new THREE.Vector2;
-    var Plane = new THREE.Plane()
-    var IntersectionPoint = new THREE.Vector3;
-    var PlaneNormal = new THREE.Vector3;
-    var raycaster = new Raycaster()
+
+
+    // var Plane = new THREE.Plane()
+    // var IntersectionPoint = new THREE.Vector3;
+    // var PlaneNormal = new THREE.Vector3;
+    // var raycaster = new Raycaster()
     window.addEventListener('keypress', (e) => { _EnsureControlKey(e) })
-    window.addEventListener('mousemove', (Obj) => {
+    renderer.domElement.addEventListener('mousemove', (Obj) => {
         if (Obj.clientY <= 250 && camera.rotation.x < 360) {
-         camera.rotation.x = 0.01 * Obj.clientY
-         Plane.translate(new THREE.Vector3(camera.rotation.x, camera.rotation.y, camera.rotation.z))
+            camera.rotation.x = 0.01 * Obj.clientY
+            // Plane.translate(new THREE.Vector3(camera.rotation.x, camera.rotation.y, camera.rotation.z))
         }
+        // mouse.x = Obj.clientX
+        // mouse.y = Obj.clientY
+        // mouse.z = GrassMesh.position.z + 20
         camera.rotation.y = 0.01 * Obj.clientX
-        mouse.x = (Obj.clientX / window.innerWidth) * 2 - 1
-        mouse.y = -(Obj.clientY / window.innerHeight) * 2 + 1
-        PlaneNormal.copy(camera.position).normalize()
-        Plane.setFromNormalAndCoplanarPoint(PlaneNormal, scene.position)
-        raycaster.setFromCamera(mouse, camera)
-        raycaster.ray.intersectPlane(Plane, IntersectionPoint)
-    
+        // mouse.x = (Obj.clientX / window.innerWidth) * 2 - 1
+        // mouse.y = -(Obj.clientY / window.innerHeight) * 2 + 1
+        // PlaneNormal.copy(camera.position).normalize()
+        // Plane.setFromNormalAndCoplanarPoint(PlaneNormal, scene.position)
+        // raycaster.setFromCamera(mouse, camera)
+        // raycaster.ray.intersectPlane(Plane, IntersectionPoint)
+
     })
 
-    //   })  
+    //  ReactDOM.render
+    return <Slider />
+
 
 }
 

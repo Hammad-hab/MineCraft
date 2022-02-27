@@ -1,0 +1,19 @@
+{
+  "name": "Home",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "electron-packager": "^15.4.0",
+    "packager": "^0.1.9"
+  },
+  "devDependencies": {
+    "electron": "^15.3.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
